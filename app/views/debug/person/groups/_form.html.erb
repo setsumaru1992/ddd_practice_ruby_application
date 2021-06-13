@@ -1,0 +1,42 @@
+<% form_url = person_group.new_record? ? debug_person_groups_path : debug_person_group_path(person_group) %>
+<%= form_with(model: person_group, url: form_url , local: true) do |f| %>
+  <%# idの値がビューにばれちゃう事例がある。デバッグだからいいけど本番では避けたい。 %>
+  <%= f.hidden_field :id_param %>
+  名前: <%= f.text_field :name %><br />
+  親グループ: <%= f.select(:parent_group_id_param, options_for_select(@parent_group_candidates, @parent_group_id_param)) %>※3階層より下は作れません<br />
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+<%# accessible_user_id_paramは現状固定。
+
+
+parent_group_id_param仕様
+方法案
+A: 既存のカテゴリ構造維持
+- 不便？ それとも自明だから問題ない？
+B: 任意に指定可能
+- 自身を変えた場合子も連れて行くの？: 行くだろうね。
+
+Aの場合
+- 新規作成時
+  - 親の指定がない場合(誰かのことして作る、以外の場合)
+    - トップクラスで作りたい場合: 親なしで作成
+    - 親が欲しい場合: トップクラスの親から選べる
+  - 親の指定がある場合(誰かの子として作る場合): その親が指定されており(hidden)編集できない
+- 編集時
+  - 既存の親がいない場合(トップクラスの場合): トップクラスの親から選べる
+  - 既存親がいる場合: ?
+
+Bの場合
+いつでも以下のセレクトボックスから選べる。親を指定したときのみデフォルト値決定
+- 動物
+    - 哺乳類
+        - 人間
+        - イルカ
+    - 鳥類
+        - 鶏
+
+Bかな。特に制約や意図がある場合の表現方法としてAが存在する。それがない場合B。 %>

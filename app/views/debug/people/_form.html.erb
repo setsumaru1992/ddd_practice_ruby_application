@@ -1,0 +1,73 @@
+<% form_url = person.new_record? ? debug_people_path : debug_person_path(person) %>
+<%= form_with(model: person, url: form_url , local: true) do |f| %>
+  <%= f.hidden_field :id_param %>
+
+  <%= f.fields_for :name, person.name do |n|%>
+    姓: <%= n.text_field :last_name %>名: <%= n.text_field :first_name %>(ミドルネーム: <%= n.text_field :middle_name %>)<br />
+    カナ: <%= n.text_field :kana %>
+    <input type="text" id="sei_kana" style="display: none;" onchange="copySeiMeiKanaToKane()">
+    <input type="text" id="mei_kana" style="display: none;" onchange="copySeiMeiKanaToKane()">
+    <br />
+
+    表示名: <%= n.text_field :disp_name %> <button type="button" onclick="copySeiMeiToDispName()">姓名転記</button> 
+  <% end %>
+  <br />
+
+  <%= f.fields_for :sex, person.sex do |s|%>
+    <% sex_candidates = ::Domain::Person::Sex::SEX_LABELS.map { |val, label| [label, val] } %>
+    誕生性別: <%= s.select :birth_sex_code, sex_candidates, include_blank: true %> 
+    希望性別: <%= s.select :desired_sex_code, sex_candidates, include_blank: true %>※誕生性別と違う場合のみ選択
+  <% end %>
+  <br />
+  
+  <%= f.fields_for :birthdate, person.birthdate do |b|%>
+    誕生日: 
+    <% def year_candidates
+      current_year = Date.today.year
+      year_of_20_years_age = current_year - 20
+      [(1800..year_of_20_years_age).to_a, nil, ((year_of_20_years_age + 1)..2100).to_a].flatten
+    end %>
+    <%= hidden_field_tag :registered_birth_year, person.birthdate&.year %>
+    <%= b.select :year, year_candidates %>年
+    <%= b.select :month, (1..12), include_blank: true %>月
+    <%= b.select :date, (1..31), include_blank: true %>日
+    <%# 年齢から西暦逆算ロジックも本気viewでは作成。2021/6/6時点で28歳なら1992,1993年 %>
+  <% end %>
+  <br />
+  
+  <%# TODO: person_groupにはgroupとエイリアスをつけたい %>
+  <%= f.fields_for :person_group, person.person_group do |g|%>
+    所属グループ: <%= g.select(:id_param, options_for_select(group_candidates, person.person_group&.id_param)) %>
+  <% end %>
+  <br />
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<%= javascript_pack_tag 'autokana.js' %>
+<script type="text/javascript">
+$(() => {
+  $.fn.autoKana('#person_name_last_name', '#sei_kana', {katakana:true});
+  $.fn.autoKana('#person_name_first_name', '#mei_kana', {katakana:true});
+  reflectRegisteredBirthYearToSelectbox()
+})
+
+function copySeiMeiToDispName(){
+  const last_name = $("#person_name_last_name").val()
+  const first_name = $("#person_name_first_name").val()
+  $("#person_name_disp_name").val(`${last_name} ${first_name}`)
+}
+
+function copySeiMeiKanaToKane(){
+  const last_name_kana = $("#sei_kana").val()
+  const first_name_kana = $("#mei_kana").val()
+  $("#person_name_kana").val(`${last_name_kana} ${first_name_kana}`)
+}
+
+function reflectRegisteredBirthYearToSelectbox(){
+  person_birthdate_year = $("#registered_birth_year").val()
+  $("#person_birthdate_year").val(person_birthdate_year)
+}
+</script>

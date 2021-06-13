@@ -1,0 +1,26 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Debug People</h1>
+
+<%= link_to '新規登録', new_debug_person_path %>
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <%# TODO: CRUD作成が一巡したらグループごとに見えるよう工夫  %>
+    <% @people.each do |person| %>
+      <tr>
+        <td><%= link_to person.name.disp_name, edit_debug_person_path(person) %></td>
+        <td><%= link_to '削除', debug_person_path(person, person: {id_param: person.id_param}), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to "トップに戻る", root_path %>

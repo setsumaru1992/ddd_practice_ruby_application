@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>グループ</h1>
+
+<%= link_to '新規作成', new_debug_person_group_path %>
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @groups.each do |group| %>
+      <tr>
+        <td>
+          <%= link_to group.name, edit_debug_person_group_path(group) %>
+          <% if parent = group.parent %>
+            ( < <%= parent.name %> )
+          <% end %>
+        </td>
+        <td><%= link_to '子グループを作成', new_debug_person_group_path(parent_group_id_param: group.id_param) %></td>
+        <td><%= link_to '削除', debug_person_group_path(group, person_group: {id_param: group.id_param}), method: :delete, data: { confirm: 'Are you sure?'} %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to "トップに戻る", root_path %>

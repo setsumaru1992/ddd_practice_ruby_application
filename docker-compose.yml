@@ -1,0 +1,11 @@
+version: '3'
+services:
+  ddd_practice_ruby_application:
+    container_name: ddd_practice_ruby_application
+    build: .
+    command: "/root/ddd_practice_ruby_application/entrypoint.sh"
+    ports:
+      - "8080:3000"
+    env_file: /path/to/dir/.env
+    volumes:
+      - .:/root/ddd_practice_ruby_application
