@@ -10,12 +10,8 @@ default: &default
 
 development:
   <<: *default
-  adapter: mysql2
-  database: <%= ENV["DB_NAME"] %>
-  host: <%= ENV["DB_HOST"] %>
-  port: <%= ENV["DB_PORT"] %>
-  username: <%= ENV["DB_USER"] %>
-  password: <%= ENV["DB_PASS"] %>
+  adapter: sqlite3
+  database: db/test.sqlite3
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -27,9 +23,5 @@ test:
 
 production:
   <<: *default
-  adapter: mysql2
-  database: <%= ENV["DB_NAME"] %>
-  host: <%= ENV["DB_HOST"] %>
-  port: <%= ENV["DB_PORT"] %>
-  username: <%= ENV["DB_USER"] %>
-  password: <%= ENV["DB_PASS"] %>
+  adapter: sqlite3
+  database: db/test.sqlite3

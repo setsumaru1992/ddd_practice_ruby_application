@@ -6,6 +6,6 @@ services:
     command: "/root/ddd_practice_ruby_application/entrypoint.sh"
     ports:
       - "8080:3000"
-    env_file: /path/to/dir/.env
+    # env_file: /path/to/dir/.env
     volumes:
       - .:/root/ddd_practice_ruby_application

@@ -106,7 +106,7 @@ module Domain::Person::Group
         
         def group_by_same_person_group_on_same_layer_recursively(hierarchy_relations, current_layer, next_layers)
           return nil if current_layer.blank?
-          return nil if hierarchy_relations.first[current_layer][:id].blank?
+          return nil if hierarchy_relations.first&.attributes&.fetch(current_layer, nil)&.fetch(:id, nil).blank?
 
           hierarchy_relations_group_by_same_person_group = hierarchy_relations.group_by{|hierarchy_relation| hierarchy_relation[current_layer][:id]}
 
